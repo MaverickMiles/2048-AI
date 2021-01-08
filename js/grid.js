@@ -3,7 +3,8 @@ function Grid(size) {
   this.startTiles   = 2;
 
   this.cells = [];
-
+  this.game = {};
+  this.moveNumber = 0;
   this.build();
   this.playerTurn = true;
 }
@@ -53,6 +54,17 @@ Grid.prototype.randomAvailableCell = function () {
 	  count++;	  
     }
   }
+  
+  console.log("should not be here");
+
+};
+
+Grid.prototype.customRandomAvailableCell = function () {
+  var cells = this.availableCells();
+ 
+  var choice = getRandomInt(cells.length);
+
+	return cells[choice];
   
   console.log("should not be here");
 
@@ -140,9 +152,12 @@ Grid.prototype.clone = function() {
 
 // Set up the initial tiles to start the game with
 Grid.prototype.addStartTiles = function () {
+  this.game["0"]= [];
   for (var i=0; i<this.startTiles; i++) {
-    this.addRandomTile();
+    var tile = this.addRandomTile();
+    this.game["0"].push({"x":tile.x,"y":tile.y,"value":tile.value});
   }
+  this.moveNumber++;
 };
 
 // Adds a tile in a random position
@@ -153,6 +168,7 @@ Grid.prototype.addRandomTile = function () {
     var tile = new Tile(this.randomAvailableCell(), value);
 
     this.insertTile(tile);
+    return tile;
   }
 };
 
@@ -251,6 +267,9 @@ Grid.prototype.move = function (direction) {
           self.playerTurn = false;
           //console.log('setting player turn to ', self.playerTurn);
           moved = true; // The tile moved from its original cell!
+          this.game[String(this.moveNumber)] = {
+            "move": direction
+          }
         }
       }
     }
@@ -267,7 +286,11 @@ Grid.prototype.move = function (direction) {
 };
 
 Grid.prototype.computerMove = function() {
-  this.addRandomTile();
+  var tile = this.addRandomTile();
+  // console.log(this.game);
+  // console.log(this.game[String(this.moveNumber)]);
+  this.game[String(this.moveNumber)]["insertTile"] = {"x":tile.x,"y":tile.y,"value":tile.value}; 
+  this.moveNumber++;
   this.playerTurn = true;
 }
 
@@ -608,7 +631,81 @@ Grid.prototype.isWin = function() {
   return false;
 }
 
+
 //Grid.prototype.zobristTable = {}
 //for
 //Grid.prototype.hash = function() {
 //}
+
+Grid.prototype.state = function(){
+
+}
+
+
+Grid.prototype.getAvailableMoves  = function(){
+
+  var availableMoves = [];
+  for (let x = 0;x<4;x++){
+    var gridCopy = this.clone();
+
+    // gridCopy.cells = JSON.parse(JSON.stringify(this.cells));
+
+    if (gridCopy.move(x).moved)
+        availableMoves.push([x, gridCopy]);
+    
+  }
+
+
+  return availableMoves;
+
+} 
+
+Grid.prototype.canMove = function(direction){
+
+  var adjCellValue;
+  for (let i =0;i<this.size;i++){
+    for(let j=0;j<this.size;j++){
+
+      if (this.cells[i][j]){
+        var move = this.vectors[direction]; 
+        adjCellValue = this.cellContent({x:i+move.x,y:j+move.y});
+
+        if (adjCellValue == this.cells[i][j] || adjCellValue == null)
+          return true
+
+      }
+
+      else if (this.cells[i][j] == 0)
+        return true;
+    }
+  }
+
+  return false;
+}
+
+Grid.prototype.clone = function (){
+  var gridCopy = new Grid(this.size);
+    for (let i =0;i<this.size;i++){
+      for(let j=0;j<this.size;j++){
+        if(this.cells[i][j] == null)
+          gridCopy.cells[i][j] = null;
+        else
+          gridCopy.cells[i][j]  = this.cellContent({x:i,y:j}).clone();
+      }
+    }
+
+  return gridCopy;
+
+}
+
+Grid.prototype.clearGrid = function (){
+  for (let i =0;i<this.size;i++){
+    for(let j=0;j<this.size;j++){
+        this.cells[i][j] = null;
+    }
+  }
+}
+
+function getRandomInt(max) {
+  return Math.floor(Math.random() * Math.floor(max));
+}

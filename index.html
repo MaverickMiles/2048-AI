@@ -6,6 +6,7 @@
 
   <link href="style/main.css" rel="stylesheet" type="text/css">
   <link href="style/ai.css" rel="stylesheet" type="text/css">
+  <link href="style/debugger.css" rel="stylesheet" type="text/css">
   <link rel="shortcut icon" href="favicon.ico">
 
   <meta name="HandheldFriendly" content="True">
@@ -36,17 +37,17 @@
       <div class="score-container">0</div>
     </div>
     <p class="game-intro">Join the numbers and get to the <strong>2048 tile!</strong></p>
-	<p class="game-intro">Or watch the randomizing AI attempt to solve it!</p>
+	<p class="game-intro">Or watch AI attempt to solve it!</p>
 
     <div class='controls'>
       <div id='run-button-container'>
-        <button id='run-button' class='ai-button'>Run AI</button>
-	
-			<span> AI runs per move: </span>
-			<input id="run-count" type="text" value="100">
-
-      </div>		
-
+        <button id='run-button' class='ai-button'>Run AI</button>    
+	      </div>		
+        <span class="debug">DEBUG MODE</span>
+        <label class="switch">
+          <input type="checkbox" checked>
+          <span class="slider round"></span>
+        </label> 
       <div id='hint-button-container'>
         <button id='hint-button' class='ai-button'>Next move</button>
       </div>
@@ -94,18 +95,21 @@
       </div>
     </div>
 
+    <input type="file" id='load-file' hidden="hidden">
+    <button id='load-game-button'>Load Game</button>  
+    <button id='save-game-button'>Save Game</button> 
+    <br>
+    <button id='prev-game-button'>Prev</button> 
+    <button id='play-game-button'>Play</button> 
+    <button id='next-game-button'>Next</button>
+    <input type="number" id="moveIndex">
+
     <p class="game-explanation">
       <strong class="important">How to play:</strong> Use your <strong>arrow keys</strong> to move the tiles. When two tiles with the same number touch, they <strong>merge into one!</strong>
     </p>
     <p class="game-explanation">
-      <strong class="important">How the AI works:</strong> The AI plays the game multiple times using completely <strong>random moves!</strong> The average end score per starting position is calculated.  
-	  The move with the highest score is chosen. By default the AI plays 100 games per move. <strong>Increase the run count for a stronger AI.</strong><br/>
+      <strong class="important">How the AI works:</strong> The AI plays the game the expectiminimax algorithm with alpha-beta pruning and other heuristics.<br/>
 	  <br/>
-	  It's interesting to note that even though the AI is based on random moves, it plays quite well. <br/>
-	  <br/>
-	  Another interesting property is that the AI has <strong>no hard-coded intelligence</strong> meaning no knowledge about what makes a good move was programmed into it! It "figures it out" all by itself.</br>
-	  </br>
-	  For a detailed discussion <a href="http://stackoverflow.com/a/23853848/632039">see my post in StackOverflow</a>.
     </p>
 	
     <hr>
@@ -113,7 +117,7 @@
     Original game by <a href="http://gabrielecirulli.com" target="_blank">Gabriele Cirulli.</a>     AI infrastucture by <a href="https://github.com/ov3y/2048-AI">Matt Overlan</a>
     </p>
     <p>
-		AI solver by <a href="https://github.com/ronzil/2048-AI">Ronen Zilberman</a>
+		AI solver by <a href="https://github.com/maverickMiles/2048-Will-Edition">William Oseghare</a>
     </p>
     <div class="sharing">
       <a href="https://twitter.com/share" class="twitter-share-button" data-text="Check out 2048, a game where you join numbers to score high! #2048game #2048ai" data-via="gabrielecirulli">Tweet</a>
@@ -133,7 +137,8 @@
   <script src="js/html_actuator.js"></script>
   <script src="js/grid.js"></script>
   <script src="js/tile.js"></script>
-  <script src="js/ai.js"></script>
+  <script src="js/expectiminimax.js"></script>
+  <script src="js/debugger.js"></script>
   <script src="js/game_manager.js"></script>
   <script src="js/application.js"></script>
 
